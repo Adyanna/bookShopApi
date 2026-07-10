@@ -6,13 +6,18 @@ export const TEST_USER = {
   password: '123Albena*__',
 };
 
-const url = '/authentication/signup';
+export const TEST_USER_BUY = {
+  email: 'pruebaUserBuy@prueba.com',
+  password: '123Albena*__',
+};
+
+const url = '/authentication';
 
 export async function createUserTest(
   overrides: { email?: string; password?: string; lastName?: string; firstName?: string } = {},
 ) {
   const resp = await request(app)
-    .post(url)
+    .post(url + '/signup')
     .send({
       firstName: 'test usuario',
       lastName: 'apellido',
@@ -23,18 +28,17 @@ export async function createUserTest(
   if (resp.status !== 201) {
     throw new Error(`Error creating user: ${resp.status} - ${resp.body}`);
   }
-  console.log('USUARIO CREADO: ', resp.body);
+  return resp.body;
 }
 
 export async function singinUserTest(overrides: { email?: string; password?: string } = {}) {
   const resp = await request(app)
-    .post(url)
+    .post(url + '/signin')
     .send({
       email: TEST_USER.email,
       password: TEST_USER.password,
       ...overrides,
     });
-  console.log('USUARIO LOGEADO: ', resp.body);
   if (resp.status !== 200) {
     throw new Error(`Error logging in user: ${resp.status} - ${resp.body}`);
   }
