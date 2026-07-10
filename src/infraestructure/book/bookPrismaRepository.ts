@@ -1,11 +1,13 @@
-import { Book as PrismaBook } from '@prisma/client';
+import { Prisma, Book as PrismaBook } from '@prisma/client';
 import { BookRepository } from '../../domain/book/repository/bookRepository';
 import { PublishBookUseCaseInput } from '../../domain/book/BookUseCases/PublishUseCase';
 import { Book, BookStatus } from '../../domain/book/Book';
 import { prismaClient } from '../global/PrismaClient';
 import { UpdateBookUseCaseInput } from '../../domain/book/BookUseCases/UpdateUseCase';
+import { findBooksUseCaseInput } from '../../domain/book/BookUseCases/CatalogUseCase';
+import { file } from 'zod';
 
-export class PublishBookPrismaRepository implements BookRepository {
+export class BookPrismaRepository implements BookRepository {
   private readonly prisma = prismaClient;
 
   async create(params: PublishBookUseCaseInput): Promise<Book> {
@@ -81,5 +83,36 @@ export class PublishBookPrismaRepository implements BookRepository {
         soldAt: new Date(),
       },
     });
+  }
+
+  async findPublished(params: findBooksUseCaseInput): Promise<{ books: Book[]; total: number }> {
+    const { page, limit } = params;
+    const filters: Prisma.BookWhereInput = { status: 'PUBLISHED' };
+    if (params.search) {
+      filters.OR = [
+        { title: { contains: params.search, mode: 'insensitive' } },
+        { author: { contains: params.search, mode: 'insensitive' } },
+      ];
+    }
+    const [bookData, total] = await Promise.all([
+      this.prisma.book.findMany({ skip: (page - 1) * limit, take: limit, where: filters }),
+      this.prisma.book.count({ where: filters }),
+    ]);
+
+    const books = bookData.map((book) => this.restore(book));
+    return { books, total };
+  }
+
+  async findByOwnerId(ownerId: number): Promise<Book[]> {
+    const bookData = await this.prisma.book.findMany({
+      where: {
+        ownerId,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    return bookData.map((book) => this.restore(book));
   }
 }

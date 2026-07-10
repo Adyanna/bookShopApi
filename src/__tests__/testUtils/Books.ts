@@ -22,3 +22,11 @@ export async function createBookTest(
   }
   return resp.body;
 }
+
+export async function buyBookTest(token: string, id: number) {
+  const resp = await request(app).post(`/books/${id}/buy`).set('Authorization', `Bearer ${token}`);
+  if (resp.status !== 200) {
+    throw new Error(`Error buying BOOK: ${resp.status} - ${resp.body}`);
+  }
+  return resp.body;
+}

@@ -4,6 +4,7 @@ import { authenticationMiddleware } from '../../authentication/middlewares/authM
 import { updateBookController } from '../controllers/updateController';
 import { deleteBookController } from '../controllers/deleteController';
 import { buyBookController } from '../controllers/buyController';
+import { findBookController } from '../controllers/catalogoController';
 
 export const bookRoute = Router();
 
@@ -16,3 +17,5 @@ bookRoute.put('/:id', authenticationMiddleware, updateBookController);
 bookRoute.delete('/:id', authenticationMiddleware, deleteBookController);
 
 bookRoute.post('/:id/buy', authenticationMiddleware, buyBookController);
+
+bookRoute.get('/', findBookController);

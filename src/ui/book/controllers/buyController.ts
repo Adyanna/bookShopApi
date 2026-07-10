@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { BuyBookUseCase } from '../../../domain/book/BookUseCases/BuyUseCase';
-import { PublishBookPrismaRepository } from '../../../infraestructure/book/bookPrismaRepository';
+import { BookPrismaRepository } from '../../../infraestructure/book/bookPrismaRepository';
 
 export const buyBookController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const bookPrismaRepository = new PublishBookPrismaRepository();
+    const bookPrismaRepository = new BookPrismaRepository();
     const updateBookUseCase = new BuyBookUseCase(bookPrismaRepository);
 
     const id = Number(req.params.id);

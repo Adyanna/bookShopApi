@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { UpdateBookUseCase } from '../../../domain/book/BookUseCases/UpdateUseCase';
-import { PublishBookPrismaRepository } from '../../../infraestructure/book/bookPrismaRepository';
+import { BookPrismaRepository } from '../../../infraestructure/book/bookPrismaRepository';
 import { z } from 'zod';
 
 const updateBookSchema = z.object({
@@ -13,7 +13,7 @@ const updateBookSchema = z.object({
 export const updateBookController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title, description, price, author } = updateBookSchema.parse(req.body);
-    const bookPrismaRepository = new PublishBookPrismaRepository();
+    const bookPrismaRepository = new BookPrismaRepository();
     const updateBookUseCase = new UpdateBookUseCase(bookPrismaRepository);
 
     const id = Number(req.params.id);

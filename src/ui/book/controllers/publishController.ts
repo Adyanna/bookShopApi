@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { PublishBookUseCase } from '../../../domain/book/BookUseCases/PublishUseCase';
-import { PublishBookPrismaRepository } from '../../../infraestructure/book/bookPrismaRepository';
-import { SegurityService } from '../../../infraestructure/global/SegurityService';
+import { BookPrismaRepository } from '../../../infraestructure/book/bookPrismaRepository';
 import { z } from 'zod';
 
 const publichBookSchema = z.object({
@@ -14,7 +13,7 @@ const publichBookSchema = z.object({
 export const publishBookController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title, description, price, author } = publichBookSchema.parse(req.body);
-    const bookPrismaRepository = new PublishBookPrismaRepository();
+    const bookPrismaRepository = new BookPrismaRepository();
     const createBookUseCase = new PublishBookUseCase(bookPrismaRepository);
 
     const newbook = await createBookUseCase.executePublishBook({
