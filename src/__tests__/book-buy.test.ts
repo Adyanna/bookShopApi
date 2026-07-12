@@ -16,6 +16,8 @@ describe('POST /books/:id/buy', () => {
 
   beforeAll(async () => {
     await environmentService.loadEnv();
+    await prismaClient.book.deleteMany();
+    await prismaClient.user.deleteMany();
 
     // Usuario comprador
     await createUserTest();

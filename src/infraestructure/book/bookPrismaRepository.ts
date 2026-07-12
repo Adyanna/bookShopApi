@@ -6,6 +6,7 @@ import { prismaClient } from '../global/PrismaClient';
 import { UpdateBookUseCaseInput } from '../../domain/book/BookUseCases/UpdateUseCase';
 import { findBooksUseCaseInput } from '../../domain/book/BookUseCases/CatalogUseCase';
 import { file } from 'zod';
+import { PriceSuggestionBook } from '../../domain/book/BookUseCases/PriceReductionSuggestion';
 
 export class BookPrismaRepository implements BookRepository {
   private readonly prisma = prismaClient;
@@ -114,5 +115,33 @@ export class BookPrismaRepository implements BookRepository {
     });
 
     return bookData.map((book) => this.restore(book));
+  }
+
+  async findBooksForPriceSuggestion(): Promise<PriceSuggestionBook[]> {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const books = await this.prisma.book.findMany({
+      where: {
+        status: 'PUBLISHED',
+        createdAt: {
+          lte: sevenDaysAgo,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return books.map((book) => ({
+      title: book.title,
+      firstName: book.user.firstName,
+      email: book.user.email,
+    }));
   }
 }

@@ -4,6 +4,7 @@ import { environmentService } from './EnvironmentService';
 
 export class BullQueueService implements QueueService {
   private readonly sellBookEmailQueue: Queue;
+  private readonly suggestPriceReductionEmailQueue: Queue;
 
   constructor() {
     const { REDIS_HOST, REDIS_PORT } = environmentService.get();
@@ -15,6 +16,14 @@ export class BullQueueService implements QueueService {
     };
 
     this.sellBookEmailQueue = new Queue('sell-book-email', conection);
+    this.suggestPriceReductionEmailQueue = new Queue('suggest-price-reduction', conection);
+  }
+  async sendEmailSuggestPriceReduction(params: {
+    email: string;
+    firstName: string;
+    booktitle: string;
+  }) {
+    await this.suggestPriceReductionEmailQueue.add('Suggest-Price-Reduction', params);
   }
 
   async sendEmailSellBook(params: { onwerId: number; booktitle: string }) {

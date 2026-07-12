@@ -11,6 +11,8 @@ describe('POST /authentication/signin', () => {
   });
 
   afterAll(async () => {
+    await prismaClient.book.deleteMany();
+    await prismaClient.user.deleteMany();
     await prismaClient.$disconnect();
   });
 
