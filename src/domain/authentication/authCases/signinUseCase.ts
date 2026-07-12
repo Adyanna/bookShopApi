@@ -18,7 +18,7 @@ export class SigninUseCase {
   }
   async executeToken(data: signinUseCaseInput): Promise<string> {
     //verificar si esxite
-    const userData = await this.authRepository.findByEmail(data.email);
+    const userData = await this.authRepository.findOneUser({ email: data.email });
     if (!userData) {
       throw new EntityNotFoundError('user', data.email);
     }

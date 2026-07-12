@@ -3,6 +3,7 @@ import { AuthRepository } from '../../domain/authentication/repository/authRepos
 import { signUpUseCaseInput } from '../../domain/authentication/authCases/signupUseCase';
 import { User } from '../../domain/authentication/User';
 import { prismaClient } from '../global/PrismaClient';
+import { UserFiltrQuery } from '../../domain/authentication/repository/authRepository';
 
 type PrismaUser = {
   id: number;
@@ -16,9 +17,22 @@ type PrismaUser = {
 export class signupPrismaRepository implements AuthRepository {
   private readonly prisma = prismaClient;
 
-  async findByEmail(email: string): Promise<User | null> {
-    const prismaUser = await this.prisma.user.findUnique({
-      where: { email },
+  async findOneUser(params: UserFiltrQuery): Promise<User | null> {
+    const where: {
+      email?: string;
+      id?: number;
+    } = {};
+
+    if (params.email) {
+      where.email = params.email;
+    }
+
+    if (params.id) {
+      where.id = params.id;
+    }
+
+    const prismaUser = await this.prisma.user.findFirst({
+      where,
     });
 
     if (!prismaUser) {

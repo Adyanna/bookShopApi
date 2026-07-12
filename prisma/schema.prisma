@@ -13,7 +13,7 @@ model Book {
   description String
   price       Float
   author      String
-  status      String
+  status      String   @default("PUBLISHED")
   ownerId     Int  
   user        User     @relation(fields:[ownerId],references:[id])
   soldAt      DateTime?

@@ -23,7 +23,7 @@ export class SignUpUseCase {
 
   async executeUser(props: signUpUseCaseInput): Promise<User> {
     //if(props.password)
-    const user = await this.authRepository.findByEmail(props.email);
+    const user = await this.authRepository.findOneUser({ email: props.email });
     if (user) {
       //throw new Error('USER_ALREADY_EXISTS');
       throw new BusinessConflictError('An user with this email already exists');

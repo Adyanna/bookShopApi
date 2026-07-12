@@ -8,6 +8,8 @@ const envSchema = z.object({
   REDIS_PORT: z.coerce.number(),
   REDIS_HOST: z.string(),
   JWT_SECRET: z.string().min(5),
+  MAILDEV_HOST: z.string(),
+  MAILDEV_PORT: z.coerce.number(),
 });
 
 type envVars = z.infer<typeof envSchema>;
